@@ -20,12 +20,24 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-socket.on('send-message',(data)=>{
-    socket.broadcast.emit('message-from-server',data);
+
+    socket.on('send-message',(data)=>{
+        socket.broadcast.emit('message-from-server',data);
     });
+
+    socket.on('start-typing',()=>{
+        socket.broadcast.emit('start-typing-from-server');
+    });
+
+    socket.on('stop-typing',()=>{
+        socket.broadcast.emit('stop-typing-from-server');
+    });
+
+  
+
     socket.on('disconnect', (socket) => {
         console.log("User left");
-            });
+    });
 });
 
 
