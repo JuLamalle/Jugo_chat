@@ -66,7 +66,7 @@ export default function Chat() {
   return (
     <div>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
-        <Card sx={{ padding: 2, marginTop: 10, width: '60%', backgroundColor: "gray" }}>
+        <Card sx={{ padding: 2, marginTop: 10, width: '60%', backgroundColor: "gray", color: "white" }}>
           <Box sx={{ marginBottom: 5 }}>
             {chat.map((data) => (
               <Typography sx={{ textAlign: data.received ? "left" : "right" }} key={data.message}>{data.message}</Typography>
