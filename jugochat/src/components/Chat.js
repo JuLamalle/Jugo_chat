@@ -64,8 +64,6 @@ export default function Chat() {
 
 
   return (
-    <div>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Card sx={{ padding: 2, marginTop: 10, width: '60%', backgroundColor: "gray", color: "white" }}>
           <Box sx={{ marginBottom: 5 }}>
             {chat.map((data) => (
@@ -98,8 +96,6 @@ export default function Chat() {
             />
           </Box>
         </Card>
-      </Box>
-    </div>
   )
 }
 

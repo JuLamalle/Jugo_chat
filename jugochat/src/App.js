@@ -8,8 +8,9 @@ function App() {
     <div>
       <Container>
         <Header />
-        
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
           <Outlet />
+        </Box>
       </Container>
     </div>
   );
