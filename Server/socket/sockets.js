@@ -12,6 +12,7 @@ const sockets = (socket) => {
     socket.on("start-typing", typingController.startTyping);
     socket.on("stop-typing", typingController.stopTyping);
     socket.on('join-room', roomController.joinRoom);
+    socket.on('new-room-created', roomController.newRoomCreated);
     socket.on('disconnect', messageController.disconnect);
 
 }

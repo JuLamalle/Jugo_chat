@@ -14,9 +14,9 @@ function App() {
   return (
     <div>
       <Container>
-        <Header />
+        <Header socket={socket} />
         <Box sx={{ display: "flex", justifyContent: "center" }}>
-          <Outlet context={{socket}}/>
+          <Outlet context={{ socket }} />
         </Box>
       </Container>
     </div>
