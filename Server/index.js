@@ -30,6 +30,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on('stop-typing',()=>{
+        console.log("Joining room")
+        socket.join(roomId);
+    });
+
+    socket.on('join-room',({roomId})=>{
         socket.broadcast.emit('stop-typing-from-server');
     });
 

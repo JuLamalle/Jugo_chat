@@ -1,6 +1,5 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import { io } from 'socket.io-client';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import OutlinedInput from '@mui/material/OutlinedInput';
@@ -9,18 +8,16 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import InputLabel from '@mui/material/InputLabel';
 import { Card } from '@mui/material';
+import { useOutletContext } from 'react-router-dom';
+
 
 export default function Chat() {
-
-  const [socket, setSocket] = useState(null);
+  const { socket } = useOutletContext();
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const [typing, setTyping] = useState(false);
 
 
-  useEffect(() => {
-    setSocket(io('http://localhost:4000'));
-  }, []);
 
 
   useEffect(() => {
