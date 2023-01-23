@@ -20,22 +20,30 @@ app.get('/', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-
-    socket.on('send-message',(data)=>{
-        socket.broadcast.emit('message-from-server',data);
+   
+    socket.on('send-message',({message, roomId})=>{
+        let skt = socket.broadcast
+        skt = roomId ? skt.to(roomId) : skt;
+        skt.emit("message-from-server",{message});
     });
 
-    socket.on('start-typing',()=>{
-        socket.broadcast.emit('start-typing-from-server');
+    socket.on("start-typing",({roomId})=>{
+        let skt = socket.broadcast
+        skt = roomId ? skt.to(roomId) : skt;
+       skt.emit("start-typing-from-server");
     });
 
-    socket.on('stop-typing',()=>{
-        console.log("Joining room")
-        socket.join(roomId);
+    socket.on("stop-typing",({roomId})=>{
+        let skt = socket.broadcast
+        skt = roomId ? skt.to(roomId) : skt;
+
+        skt.emit('stop-typing-from-server');
+
     });
 
     socket.on('join-room',({roomId})=>{
-        socket.broadcast.emit('stop-typing-from-server');
+        console.log("Joining room")
+        socket.join(roomId);
     });
 
   

@@ -8,7 +8,7 @@ import IconButton from '@mui/material/IconButton';
 import SendIcon from '@mui/icons-material/Send';
 import InputLabel from '@mui/material/InputLabel';
 import { Card } from '@mui/material';
-import { useOutletContext } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 
 
 export default function Chat() {
@@ -16,6 +16,7 @@ export default function Chat() {
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const [typing, setTyping] = useState(false);
+  const { roomId } = useParams();
 
 
 
@@ -39,7 +40,7 @@ export default function Chat() {
 
   function handleForm(e) {
     e.preventDefault();
-    socket.emit("send-message", { message })
+    socket.emit("send-message", { message, roomId })
     setChat((prev) => [...prev, { message, 'received': false }]);
     setMessage("");
 
@@ -50,18 +51,21 @@ export default function Chat() {
   function handleInput(e) {
 
     setMessage(e.target.value);
-    socket.emit('start-typing');
+    socket.emit("start-typing", {roomId});
 
     if (typingTimeout) { clearTimeout(typingTimeout) }
 
     settypingTimeout(setTimeout(() => {
-      socket.emit('stop-typing');
+      socket.emit("stop-typing",{roomId});
     }, 1000));
   }
 
 
   return (
         <Card sx={{ padding: 2, marginTop: 10, width: '60%', backgroundColor: "gray", color: "white" }}>
+          {
+          roomId &&     <Typography>Room: {roomId}</Typography>
+          }
           <Box sx={{ marginBottom: 5 }}>
             {chat.map((data) => (
               <Typography sx={{ textAlign: data.received ? "left" : "right" }} key={data.message}>{data.message}</Typography>
