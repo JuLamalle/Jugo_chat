@@ -1,13 +1,7 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import OutlinedInput from '@mui/material/OutlinedInput';
-import InputAdornment from '@mui/material/InputAdornment';
-import IconButton from '@mui/material/IconButton';
+import { Box, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel, Card } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
-import InputLabel from '@mui/material/InputLabel';
-import { Card } from '@mui/material';
 import { useOutletContext, useParams } from 'react-router-dom';
 
 
