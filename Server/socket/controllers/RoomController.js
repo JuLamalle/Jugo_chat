@@ -1,4 +1,5 @@
 import BaseController from "./BaseController.js";
+import Room from "../../models/Rooms.js";
 
 export default class RoomController extends BaseController {
     joinRoom = ({ roomId }) => {
@@ -7,6 +8,11 @@ export default class RoomController extends BaseController {
     }
 
     newRoomCreated = ({ roomId }) => {
-        this.socket.broadcast.emit("new-room-created", { roomId });
+        const room = new Room({
+            name: 'RoomT',
+            roomId: roomId,
+        });
+        room.save();
+        this.socket.broadcast.emit("new-room-created", { room });
     }
 }

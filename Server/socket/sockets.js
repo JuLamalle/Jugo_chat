@@ -8,12 +8,17 @@ const sockets = (socket) => {
     const roomController = new RoomController(socket);
     const messageController = new MessageController(socket);
 
+    //Messages
     socket.on('send-message', messageController.sendMessage);
+    socket.on('disconnect', messageController.disconnect);
+
+    //Typing message
     socket.on("start-typing", typingController.startTyping);
     socket.on("stop-typing", typingController.stopTyping);
+
+    //Rooms
     socket.on('join-room', roomController.joinRoom);
     socket.on('new-room-created', roomController.newRoomCreated);
-    socket.on('disconnect', messageController.disconnect);
 
 }
 
