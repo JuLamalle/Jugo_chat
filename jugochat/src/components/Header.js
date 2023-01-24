@@ -2,9 +2,10 @@ import { React, useState, useEffect } from 'react';
 import { Button, Card, Box } from '@mui/material';
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
+import Cookies from 'js-cookies';
 
 
-export default function Header({ socket }) {
+export default function Header({ socket, userId, setUserId }) {
     const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
     const createNewRoom = () => {
@@ -12,17 +13,30 @@ export default function Header({ socket }) {
         navigate(`/room/${roomId}`);
         setRooms([...rooms, roomId]);
         socket.emit("new-room-created", { roomId });
-    }
+    };
+    const login = () => {
+        const userId = uuidv4();
+        Cookies.setItem("userId", userId);
+        setUserId(userId);
+        navigate("/");
+
+    };
+    const logout = () => {
+        Cookies.removeItem("userId");
+        setUserId(null);
+        navigate("/");
+
+    };
 
     useEffect(() => {
         async function fetchRooms() {
             await fetch('http://localhost:4000/rooms')
                 .then(res => res.json())
                 // .then((res) => { console.log(res) })
-                .then( res => {setRooms(res.rooms)} );
+                .then(res => { setRooms(res.rooms) });
         }
         fetchRooms();
-    }, [rooms])
+    }, [rooms]);
 
 
     useEffect(() => {
@@ -30,7 +44,7 @@ export default function Header({ socket }) {
         socket.on("new-room-created", ({ room }) => {
             setRooms([...rooms, room]);
         })
-    }, [socket])
+    }, [socket]);
 
     return (
         <Card sx={{ margin: 5, backgroundColor: "gray" }} raised>
@@ -57,9 +71,21 @@ export default function Header({ socket }) {
                             )
                         })}
                 </Box>
-                <Button sx={{ color: "white" }} variant="text" onClick={createNewRoom}>
-                    New Room
-                </Button>
+                <Box>
+                    {!userId && (
+                        <Button sx={{ color: "white" }} variant="text" onClick={login}>
+                            Login
+                        </Button>
+                    )}
+                    {userId && (
+                        <Button sx={{ color: "white" }} variant="text" onClick={logout}>
+                            Logout
+                        </Button>
+                    )}
+                    <Button sx={{ color: "white" }} variant="text" onClick={createNewRoom}>
+                        New Room
+                    </Button>
+                </Box>
             </Box>
         </Card>
     );
