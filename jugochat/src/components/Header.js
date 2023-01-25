@@ -16,14 +16,14 @@ export default function Header({ socket, userId, setUserId }) {
     };
     const login = () => {
         const userId = uuidv4();
-        Cookies.setItem("userId", userId);
         setUserId(userId);
+        Cookies.setItem("userId", userId);
         navigate("/");
 
     };
     const logout = () => {
-        Cookies.removeItem("userId");
         setUserId(null);
+        Cookies.removeItem("userId");
         navigate("/");
 
     };
@@ -78,13 +78,16 @@ export default function Header({ socket, userId, setUserId }) {
                         </Button>
                     )}
                     {userId && (
-                        <Button sx={{ color: "white" }} variant="text" onClick={logout}>
-                            Logout
-                        </Button>
+                        <>
+                            <Button sx={{ color: "white" }} variant="text" onClick={createNewRoom}>
+                                New Room
+                            </Button>
+
+                            <Button sx={{ color: "white" }} variant="text" onClick={logout}>
+                                Logout
+                            </Button>
+                        </>
                     )}
-                    <Button sx={{ color: "white" }} variant="text" onClick={createNewRoom}>
-                        New Room
-                    </Button>
                 </Box>
             </Box>
         </Card>
