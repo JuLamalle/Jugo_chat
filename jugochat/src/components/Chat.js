@@ -1,6 +1,6 @@
 import React from 'react'
 import { useEffect, useState } from 'react';
-import { Box, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel, Card } from '@mui/material';
+import { Box, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel, Card, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useOutletContext, useParams } from 'react-router-dom';
 
@@ -54,12 +54,20 @@ export default function Chat() {
     }, 1000));
   }
 
+async function removeRoom() {
+
+socket.emit("room-removed", {roomId});
+window.location.href = "/";
+}
 
   return (
         <Card sx={{ padding: 2, marginTop: 10, width: '60%', backgroundColor: "gray", color: "white" }}>
+          <Box sx={{display:"flex", justifyContent:"space-between"}}>
           {
-          roomId &&     <Typography>Room: {roomId}</Typography>
-          }
+          roomId &&     <Typography>Room: {roomId}</Typography>}
+          {roomId &&   (  <Button size='small' variant='text' color='secondary' onClick={removeRoom}>Remove Room</Button>
+          )}
+          </Box>
           <Box sx={{ marginBottom: 5 }}>
             {chat.map((data) => (
               <Typography sx={{ textAlign: data.received ? "left" : "right" }} key={data.message}>{data.message}</Typography>

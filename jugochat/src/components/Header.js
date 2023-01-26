@@ -12,7 +12,7 @@ export default function Header({ socket, userId, setUserId }) {
     const createNewRoom = () => {
         const roomId = uuidv4();
         navigate(`/room/${roomId}`);
-        setRooms([...rooms, roomId]);
+        setRooms([...rooms, {roomId, name: "RoomT", _id: "testId"}]);
         socket.emit("new-room-created", { roomId, userId });
     };
     const login = () => {
@@ -31,20 +31,24 @@ export default function Header({ socket, userId, setUserId }) {
 
     useEffect(() => {
         async function fetchRooms() {
-            await fetch('http://localhost:4000/rooms')
-                .then(res => res.json())
-                // .then((res) => { console.log(res) })
-                .then(res => { setRooms(res.rooms) });
+       const res = await fetch("http://localhost:4000/rooms");
+      const { rooms } = await res.json();
+      setRooms(rooms);
         }
         fetchRooms();
-    }, [rooms]);
+    }, []);
 
 
     useEffect(() => {
         if (!socket) return;
         socket.on("new-room-created", ({ room }) => {
             setRooms([...rooms, room]);
-        })
+        });
+
+        socket.on("room-removed", ({ roomId }) => {
+            setRooms(rooms.filter(room => room.roomId !== roomId));
+        });
+
     }, [socket]);
 
     return (

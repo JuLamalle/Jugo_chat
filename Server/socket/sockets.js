@@ -19,6 +19,7 @@ const sockets = (socket) => {
     //Rooms
     socket.on('join-room', roomController.joinRoom);
     socket.on('new-room-created', roomController.newRoomCreated);
+    socket.on('room-removed', roomController.roomRemoved);
 
 }
 
