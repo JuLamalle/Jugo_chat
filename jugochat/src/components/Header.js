@@ -8,11 +8,12 @@ import Cookies from 'js-cookies';
 export default function Header({ socket, userId, setUserId }) {
     const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
+
     const createNewRoom = () => {
         const roomId = uuidv4();
         navigate(`/room/${roomId}`);
         setRooms([...rooms, roomId]);
-        socket.emit("new-room-created", { roomId });
+        socket.emit("new-room-created", { roomId, userId });
     };
     const login = () => {
         const userId = uuidv4();

@@ -7,10 +7,11 @@ export default class RoomController extends BaseController {
         this.socket.join(roomId);
     }
 
-    newRoomCreated = ({ roomId }) => {
+    newRoomCreated = ({ roomId, userId }) => {
         const room = new Room({
             name: 'RoomT',
-            roomId: roomId,
+            roomId,
+            userId,
         });
         room.save();
         this.socket.broadcast.emit("new-room-created", { room });
