@@ -31,12 +31,12 @@ export default function Header({ socket, userId, setUserId }) {
 
     useEffect(() => {
         async function fetchRooms() {
-       const res = await fetch("http://localhost:4000/rooms");
-      const { rooms } = await res.json();
-      setRooms(rooms);
+        await fetch("http://localhost:4000/rooms")
+      .then(res => res.json())
+      .then (res => {setRooms(res.rooms)});
         }
         fetchRooms();
-    }, []);
+    }, [rooms]);
 
 
     useEffect(() => {
