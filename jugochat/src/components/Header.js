@@ -11,20 +11,27 @@ export default function Header({ socket, userId, setUserId }) {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState("");
+
+  const [openRoomModal, setOpenRoomModal] = useState(false);
+  const [nickname, setNickname] = useState("");
+  const [roomName, setRoomName] = useState("");
 
   const handleClose = () => {
     setOpen(false);
-    console.log(name);
+    Cookies.setItem("nickname", nickname)
+    console.log(nickname);
   };
   const handleOpen = () => setOpen(true);
+
+  const handleOpenRoomModal = () => setOpenRoomModal(true);
 
   const createNewRoom = () => {
     const roomId = uuidv4();
     navigate(`/room/${roomId}`);
-    setRooms([...rooms, { roomId, name: "RoomT", _id: "testId" }]);
-    socket.emit("new-room-created", { roomId, userId });
-  };
+    setRooms([...rooms, { roomId, name: roomName, _id: "testId" }]);
+    socket.emit("new-room-created", { roomId, userId, roomName });
+    setOpenRoomModal(false);
+  };  
   const login = () => {
     const userId = uuidv4();
     setUserId(userId);
@@ -34,6 +41,7 @@ export default function Header({ socket, userId, setUserId }) {
   const logout = () => {
     setUserId(null);
     Cookies.removeItem("userId");
+    Cookies.removeItem("nickname");
     navigate("/");
   };
 
@@ -105,10 +113,54 @@ export default function Header({ socket, userId, setUserId }) {
 
           {userId && (
             <>
+            <Modal
+                open={openRoomModal}
+                aria-labelledby="modal-title"
+                aria-describedby="modal-modal-descrip"
+              >
+                <Box
+                  sx={{
+                    width: "400px",
+                    margin: "50%",
+                    border: "2px solid",
+                    position: "absolute",
+                    transform: "translate(-50%, -50%)",
+                    bgcolor: "background.paper",
+                    marginTop: "400px",
+                    height: "120px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Typography
+                    id="modal-title"
+                    variant="h6"
+                    component="h2"
+                  >
+                    Enter name room :
+                  </Typography>
+                  <TextField
+                    sx={{ marginTop: "10px" }}
+                    id="outlined-bas"
+                    onChange={(e) => setRoomName(e.target.value)}
+                    value={roomName}
+                    label="Room Name"
+                    variant="outlined"
+                  >
+                    
+                  </TextField>
+                  <Button
+                    onClick={createNewRoom}
+                    variant="secondary"
+                    sx={{ marginTop: "20px" }}
+                  >
+                    Confirm
+                  </Button>
+                </Box>
+              </Modal>
               <Button
                 sx={{ color: "white" }}
                 variant="text"
-                onClick={createNewRoom}
+                onClick={handleOpenRoomModal}
               >
                 New Room
               </Button>
@@ -140,13 +192,12 @@ export default function Header({ socket, userId, setUserId }) {
                   <TextField
                     sx={{ marginTop: "10px" }}
                     id="outlined-basic"
-                    onChange={(e) => setName(e.target.value)}
-                    value={name}
+                    onChange={(e) => setNickname(e.target.value)}
+                    value={nickname}
                     label="Carlos"
                     variant="outlined"
                   >
-                    {" "}
-                    {name}
+                    
                   </TextField>
                   <Button
                     onClick={handleClose}

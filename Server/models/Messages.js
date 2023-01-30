@@ -6,6 +6,7 @@ const messagesSchema = new Schema({
     message: String,
     roomId: String,
     userId: String,
+    nickname: String,
 });
 
 export default mongoose.model("Message", messagesSchema); 

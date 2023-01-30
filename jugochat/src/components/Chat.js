@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { Box, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel, Card, Button } from '@mui/material';
 import SendIcon from '@mui/icons-material/Send';
 import { useOutletContext, useParams } from 'react-router-dom';
+import Cookies from 'js-cookies';
+
 
 
 export default function Chat() {
@@ -11,30 +13,27 @@ export default function Chat() {
   const [chat, setChat] = useState([]);
   const [typing, setTyping] = useState(false);
   const { roomId } = useParams();
-
-
+  const [nickname, setNickname] = useState(null);
 
 
   useEffect(() => {
+    const nickname = Cookies.getItem("nickname");
+    if (nickname) {
+      setNickname(nickname);
+    }
     if (!socket) return;
     socket.on('message-from-server', (data) => {
       setChat((prev) => [...prev, { message: data.message, 'received': true }]);
     });
 
-
-
     socket.on('start-typing-from-server', () => setTyping(true));
-
 
     socket.on('stop-typing-from-server', () => setTyping(false));
   }, [socket]);
 
-
-
-
   function handleForm(e) {
     e.preventDefault();
-    socket.emit("send-message", { message, roomId, userId })
+    socket.emit("send-message", { message, roomId, userId, nickname })
     setChat((prev) => [...prev, { message, 'received': false }]);
     setMessage("");
 

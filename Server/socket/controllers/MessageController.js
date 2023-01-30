@@ -7,13 +7,14 @@ export default class MessageController extends BaseController {
         console.log("User left");
     }
 
-    sendMessage = async ({ message, roomId, userId }) => {
+    sendMessage = async ({ message, roomId, userId, nickname }) => {
         const countMessage = await Message.estimatedDocumentCount();
         const newMessage = new Message({
             messageId: countMessage+1,
             message: message,
             roomId: roomId,
             userId: userId,
+            nickname: nickname,
         });
         newMessage.save();
         let skt = this.socket.broadcast
