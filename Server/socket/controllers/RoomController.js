@@ -22,4 +22,9 @@ export default class RoomController extends BaseController {
         this.socket.emit("room-removed", { roomId });
 
     }
+
+    renameRoom = async ({renameRoomId, newRoomName}) => {
+        await Room.findOneAndUpdate({roomId: renameRoomId}, {name: newRoomName});
+        // this.socket.emit("rename-room", {room});
+    }
 }

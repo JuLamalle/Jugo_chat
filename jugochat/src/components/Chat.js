@@ -4,6 +4,7 @@ import { Box, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel,
 import SendIcon from '@mui/icons-material/Send';
 import { useOutletContext, useParams } from 'react-router-dom';
 import Cookies from 'js-cookies';
+import { fontSize } from '@mui/system';
 
 
 
@@ -13,7 +14,7 @@ export default function Chat() {
   const [chat, setChat] = useState([]);
   const [typing, setTyping] = useState(false);
   const { roomId } = useParams();
-  const [nickname, setNickname] = useState(null);
+  const [nickname, setNickname] = useState("");
 
 
   useEffect(() => {
@@ -23,7 +24,7 @@ export default function Chat() {
     }
     if (!socket) return;
     socket.on('message-from-server', (data) => {
-      setChat((prev) => [...prev, { message: data.message, 'received': true }]);
+      setChat((prev) => [...prev, { message: data.message, 'received': true, nickname: data.nickname }]);
     });
 
     socket.on('start-typing-from-server', () => setTyping(true));
@@ -34,7 +35,7 @@ export default function Chat() {
   function handleForm(e) {
     e.preventDefault();
     socket.emit("send-message", { message, roomId, userId, nickname })
-    setChat((prev) => [...prev, { message, 'received': false }]);
+    setChat((prev) => [...prev, { message, 'received': false, nickname: nickname }]);
     setMessage("");
 
   }
@@ -63,15 +64,18 @@ window.location.href = "/";
         <Card sx={{ padding: 2, marginTop: 10, width: '60%', backgroundColor: "gray", color: "white" }}>
           <Box sx={{display:"flex", justifyContent:"space-between"}}>
           {
-          roomId &&     <Typography>Room: {roomId}</Typography>}
-          {roomId &&   (  <Button size='small' variant='text' color='secondary' onClick={removeRoom}>Remove Room</Button>
+          roomId &&     <Typography>Room ID: {roomId}</Typography>}
+          {roomId &&   (  <Button size='small' variant='contained' color='error' onClick={removeRoom} sx={{marginBottom:"5px"}}>Remove Room</Button>
           )}
           </Box>
           <Box sx={{ marginBottom: 5 }}>
             {chat.map((data) => (
-              <Typography sx={{ textAlign: data.received ? "left" : "right" }} key={data.message}>{data.message}</Typography>
-            ))}
-
+              <div>
+              <Typography sx={{ textAlign: data.received ? "left" : "right", fontWeight:"bold", color:"yellow", fontSize:"1.1rem"}} key={data.message}>{data.nickname}</Typography>
+              <Typography sx={{ textAlign: data.received ? "left" : "right", margin:"5px 10px 5px 5px" }} key={data.message}>{data.message}</Typography>
+              </div>
+              ))}
+             
           </Box>
           <Box component="form" onSubmit={handleForm}>
             {typing && (

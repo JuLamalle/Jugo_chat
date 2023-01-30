@@ -19,6 +19,6 @@ export default class MessageController extends BaseController {
         newMessage.save();
         let skt = this.socket.broadcast
         skt = roomId ? skt.to(roomId) : skt;
-        skt.emit("message-from-server", { message });
+        skt.emit("message-from-server", { message, nickname });
     }
 }
