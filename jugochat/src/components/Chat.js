@@ -6,7 +6,7 @@ import { useOutletContext, useParams } from 'react-router-dom';
 
 
 export default function Chat() {
-  const { socket } = useOutletContext();
+  const { socket, userId } = useOutletContext();
   const [message, setMessage] = useState('');
   const [chat, setChat] = useState([]);
   const [typing, setTyping] = useState(false);
@@ -34,7 +34,7 @@ export default function Chat() {
 
   function handleForm(e) {
     e.preventDefault();
-    socket.emit("send-message", { message, roomId })
+    socket.emit("send-message", { message, roomId, userId })
     setChat((prev) => [...prev, { message, 'received': false }]);
     setMessage("");
 
