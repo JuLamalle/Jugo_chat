@@ -18,6 +18,8 @@ export default function Header({ socket, userId, setUserId }) {
   const [roomName, setRoomName] = useState("");
   const [newRoomName, setNewRoomName] = useState("");
   const [nickname, setNickname] = useState("");
+  const [newNickName, setNewNickName] = useState("");
+  const [openNewNicknameModal, setOpenNewNicknameModal] = useState(false);
 
   // Modal rename room
   const handleOpenRenameRoom = () => setOpenNewRoomNameModal(true);
@@ -25,6 +27,7 @@ export default function Header({ socket, userId, setUserId }) {
 
   const renameRoom = (renameRoomId) => {
     setRenameRoomId(renameRoomId);
+
     handleOpenRenameRoom();
   };
 
@@ -34,7 +37,24 @@ export default function Header({ socket, userId, setUserId }) {
     setNewRoomName("");
   };
 
-  //Modal login
+
+// Modal rename Nickname
+const handleOpenRenameNickname = () => setOpenNewNicknameModal(true);
+const handleCloseRenameNickname = () => setOpenNewNicknameModal(false);
+
+const renameNickname = () => {
+  handleOpenRenameNickname();
+}
+
+const confirmRenameNickname = () => {
+  Cookies.setItem("nickname", newNickName);
+  Cookies.setItem("userId", userId);
+  socket.emit("rename-nickname", { userId, newNickName });
+  handleCloseRenameNickname();
+};
+
+
+//Modal login
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {
@@ -74,6 +94,7 @@ export default function Header({ socket, userId, setUserId }) {
   const handleCloseRoomModal = () => setOpenRoomModal(false);
 
   useEffect(() => {
+
     async function fetchRooms() {
       await fetch("http://localhost:4000/rooms")
         .then((res) => res.json())
@@ -92,6 +113,11 @@ export default function Header({ socket, userId, setUserId }) {
 
     socket.on("room-removed", ({ roomId }) => {
       setRooms(rooms.filter((room) => room.roomId !== roomId));
+    });
+
+    socket.on("rename-nickname", ({userId, newNickName}) =>{
+      setUserId(userId);
+      setNickname(newNickName);
     });
   }, [socket]);
 
@@ -204,6 +230,58 @@ export default function Header({ socket, userId, setUserId }) {
                 </Box>
               </Modal>
 
+                  {/* Modal rename Nickname  */}
+                  
+              <Modal
+            open={openNewNicknameModal}
+            aria-labelledby="modal-title"
+                aria-describedby="modal-modal-descrip"
+              >
+                <Box
+                  sx={{
+                    width: "500px",
+                    margin: "50%",
+                    border: "2px solid",
+                    position: "absolute",
+                    transform: "translate(-50%, -50%)",
+                    bgcolor: "background.paper",
+                    marginTop: "400px",
+                    height: "120px",
+                    borderRadius: "10px",
+                  }}
+                >
+                  <Typography id="modal-title" variant="h6" component="h2">
+                  Please enter new Nickname :
+                  </Typography>
+                  <TextField
+                    sx={{ marginTop: "10px" }}
+                    id="outlined-bas"
+                    onChange={(e) => setNewNickName(e.target.value)}
+                    value={newNickName}
+                    label="Nickname"
+                    variant="outlined"
+                  ></TextField>
+
+                  <Button
+                    onClick={confirmRenameNickname}
+                    variant="secondary"
+                    sx={{ marginTop: "20px" }}
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    onClick={handleCloseRenameNickname}
+                    variant="secondary"
+                    sx={{ marginTop: "20px" }}
+                  >
+                    Cancel
+                  </Button>
+
+                </Box>
+              </Modal>
+
+              
+
               <Button
                 sx={{ color: "white" }}
                 variant="text"
@@ -211,6 +289,7 @@ export default function Header({ socket, userId, setUserId }) {
               >
                 New Room
               </Button>
+              <Button sx={{ color: "white" }} variant="text" onClick={renameNickname}>{nickname}</Button>
               <Button sx={{ color: "white" }} variant="text" onClick={logout}>
                 Logout
               </Button>

@@ -21,4 +21,12 @@ export default class MessageController extends BaseController {
         skt = roomId ? skt.to(roomId) : skt;
         skt.emit("message-from-server", { message, nickname });
     }
+
+    renameNickname = async ({userId, newNickName}) => {
+      await  Message.updateMany({userId: userId}, {nickname: newNickName}
+           
+        );
+        this.socket.emit("rename-nickname", {userId, newNickName});
+    }
 }
+

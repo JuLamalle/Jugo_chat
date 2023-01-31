@@ -4,9 +4,6 @@ import { Box, Typography, OutlinedInput, InputAdornment, IconButton, InputLabel,
 import SendIcon from '@mui/icons-material/Send';
 import { useOutletContext, useParams } from 'react-router-dom';
 import Cookies from 'js-cookies';
-import { fontSize } from '@mui/system';
-
-
 
 export default function Chat() {
   const { socket, userId } = useOutletContext();
@@ -30,6 +27,7 @@ export default function Chat() {
     socket.on('start-typing-from-server', () => setTyping(true));
 
     socket.on('stop-typing-from-server', () => setTyping(false));
+
   }, [socket]);
 
   function handleForm(e) {
@@ -70,9 +68,9 @@ window.location.href = "/";
           </Box>
           <Box sx={{ marginBottom: 5 }}>
             {chat.map((data) => (
-              <div>
-              <Typography sx={{ textAlign: data.received ? "left" : "right", fontWeight:"bold", color:"yellow", fontSize:"1.1rem"}} key={data.message}>{data.nickname}</Typography>
-              <Typography sx={{ textAlign: data.received ? "left" : "right", margin:"5px 10px 5px 5px" }} key={data.message}>{data.message}</Typography>
+              <div key={data._id}>
+              <Typography sx={{ textAlign: data.received ? "left" : "right", fontWeight:"bold", color:"yellow", fontSize:"1.1rem"}} >{data.nickname}</Typography>
+              <Typography sx={{ textAlign: data.received ? "left" : "right", margin:"5px 10px 5px 5px" }}>{data.message}</Typography>
               </div>
               ))}
              

@@ -11,6 +11,7 @@ const sockets = (socket) => {
     //Messages
     socket.on('send-message', messageController.sendMessage);
     socket.on('disconnect', messageController.disconnect);
+    socket.on('rename-nickname', messageController.renameNickname);
 
     //Typing message
     socket.on("start-typing", typingController.startTyping);
