@@ -70,7 +70,7 @@ const confirmRenameNickname = () => {
   const createNewRoom = () => {
     const roomId = uuidv4();
     navigate(`/room/${roomId}`);
-    setRooms([...rooms, { roomId, name: roomName, _id: "testId" }]);
+    setRooms([...rooms, { roomId: roomId, name: roomName/*, _id: "testId"*/ }]);
     socket.emit("new-room-created", { roomId, userId, roomName });
     handleCloseRoomModal();
   };
@@ -119,6 +119,13 @@ const confirmRenameNickname = () => {
       setUserId(userId);
       setNickname(newNickName);
     });
+
+    socket.on("rename-room", ({renameRoomId, newRoomName}) =>{
+      setRenameRoomId(renameRoomId);
+      setNewRoomName(newRoomName);
+    });
+
+
   }, [socket]);
 
 

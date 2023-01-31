@@ -5,6 +5,8 @@ export default class RoomController extends BaseController {
     joinRoom = ({ roomId }) => {
         console.log("Joining room")
         this.socket.join(roomId);
+        this.socket.broadcast.emit("message-from-server",  {message :"User join"});
+
     }
 
     newRoomCreated = ({ roomId, userId, roomName }) => {
@@ -25,6 +27,6 @@ export default class RoomController extends BaseController {
 
     renameRoom = async ({renameRoomId, newRoomName}) => {
         await Room.findOneAndUpdate({roomId: renameRoomId}, {name: newRoomName});
-        // this.socket.emit("rename-room", {room});
+        this.socket.emit("rename-room", {renameRoomId}, {newRoomName});
     }
 }

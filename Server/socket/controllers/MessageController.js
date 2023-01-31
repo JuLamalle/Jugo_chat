@@ -5,6 +5,7 @@ export default class MessageController extends BaseController {
     messageCount = 1;
     disconnect = (socket) => {
         console.log("User left");
+        this.socket.broadcast.emit("message-from-server",  {message :"User left"});
     }
 
     sendMessage = async ({ message, roomId, userId, nickname }) => {
@@ -19,7 +20,7 @@ export default class MessageController extends BaseController {
         newMessage.save();
         let skt = this.socket.broadcast
         skt = roomId ? skt.to(roomId) : skt;
-        skt.emit("message-from-server", { message, nickname });
+        skt.emit("message-from-server", { message, nickname, roomId });
     }
 
     renameNickname = async ({userId, newNickName}) => {
