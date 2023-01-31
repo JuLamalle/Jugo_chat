@@ -6,7 +6,7 @@ import TextField from "@mui/material/TextField";
 import { Link, useNavigate } from "react-router-dom";
 import { v4 as uuidv4 } from "uuid";
 import Cookies from "js-cookies";
-import EditIcon from '@mui/icons-material/Edit';
+import EditIcon from "@mui/icons-material/Edit";
 
 export default function Header({ socket, userId, setUserId }) {
   const navigate = useNavigate();
@@ -15,9 +15,28 @@ export default function Header({ socket, userId, setUserId }) {
   const [renameRoomId, setRenameRoomId] = useState("");
   const [openRoomModal, setOpenRoomModal] = useState(false);
   const [openNewRoomNameModal, setOpenNewRoomNameModal] = useState(false);
-  const [nickname, setNickname] = useState("");
   const [roomName, setRoomName] = useState("");
   const [newRoomName, setNewRoomName] = useState("");
+  const [nickname, setNickname] = useState("");
+
+  // Modal rename room
+  const handleOpenRenameRoom = () => setOpenNewRoomNameModal(true);
+  const handleCloseRenameRoom = () => setOpenNewRoomNameModal(false);
+
+  const renameRoom = (renameRoomId) => {
+    setRenameRoomId(renameRoomId);
+    handleOpenRenameRoom();
+  };
+
+  const confirmRenameRoom = () => {
+    socket.emit("rename-room", { renameRoomId, newRoomName });
+    handleCloseRenameRoom();
+    setNewRoomName("");
+  };
+
+  //Modal login
+  const handleOpen = () => setOpen(true);
+
   const handleClose = () => {
     setOpen(false);
     Cookies.setItem("nickname", nickname);
@@ -26,15 +45,8 @@ export default function Header({ socket, userId, setUserId }) {
   const handleCancelLogin = () => {
     setOpen(false);
   };
-  const handleOpen = () => setOpen(true);
 
-  // Modal création room
-  const handleOpenRoomModal = () => setOpenRoomModal(true);
-  const handleCloseRoomModal = () => setOpenRoomModal(false);
-  // Modal rename room
-  const handleOpenRenameRoom = () => setOpenNewRoomNameModal(true);
-  const handleCloseRenameRoom = () => setOpenNewRoomNameModal(false);
-
+  //Generate a userId
   const createNewRoom = () => {
     const roomId = uuidv4();
     navigate(`/room/${roomId}`);
@@ -42,17 +54,6 @@ export default function Header({ socket, userId, setUserId }) {
     socket.emit("new-room-created", { roomId, userId, roomName });
     handleCloseRoomModal();
   };
-
-  const renameRoom = (renameRoomId) => {
-    setRenameRoomId(renameRoomId);
-    handleOpenRenameRoom();
-  }
-
-  const confirmRenameRoom = () => {
-    socket.emit("rename-room", { renameRoomId, newRoomName });
-    handleCloseRenameRoom();
-    setNewRoomName("");
-  }
 
   const login = () => {
     const userId = uuidv4();
@@ -67,6 +68,10 @@ export default function Header({ socket, userId, setUserId }) {
     Cookies.removeItem("nickname");
     navigate("/");
   };
+
+  // Modal création room
+  const handleOpenRoomModal = () => setOpenRoomModal(true);
+  const handleCloseRoomModal = () => setOpenRoomModal(false);
 
   useEffect(() => {
     async function fetchRooms() {
@@ -90,6 +95,7 @@ export default function Header({ socket, userId, setUserId }) {
     });
   }, [socket]);
 
+
   return (
     <Card sx={{ margin: 5, backgroundColor: "gray" }} raised>
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -99,6 +105,7 @@ export default function Header({ socket, userId, setUserId }) {
               Home
             </Button>
           </Link>
+
           {userId && (
             <>
               <Link style={{ textDecoration: "none" }} to="/chats">
@@ -117,11 +124,11 @@ export default function Header({ socket, userId, setUserId }) {
                       {room.name}
                     </Button>
                     <IconButton
-                    onClick={() => renameRoom(room.roomId)}
-                    edge="end"
-                    type='submit'
-                  >
-                    <EditIcon/>
+                      onClick={() => renameRoom(room.roomId)}
+                      edge="end"
+                      type="submit"
+                    >
+                      <EditIcon />
                     </IconButton>
                   </Link>
                 );
@@ -129,6 +136,7 @@ export default function Header({ socket, userId, setUserId }) {
             </>
           )}
         </Box>
+
         <Box>
           {!userId && (
             <div>
@@ -143,6 +151,8 @@ export default function Header({ socket, userId, setUserId }) {
               </Button>
             </div>
           )}
+
+              {/* Modal rename room  */}
 
           {userId && (
             <>
@@ -190,6 +200,7 @@ export default function Header({ socket, userId, setUserId }) {
                   >
                     Cancel
                   </Button>
+
                 </Box>
               </Modal>
 
@@ -204,6 +215,7 @@ export default function Header({ socket, userId, setUserId }) {
                 Logout
               </Button>
 
+                  {/* Modal New Room */}
               <Modal
                 open={openNewRoomNameModal}
                 aria-labelledby="modal-title"
@@ -253,6 +265,8 @@ export default function Header({ socket, userId, setUserId }) {
             </>
           )}
 
+                {/* Modal Nickname  */}
+                
           <Modal
             open={open}
             aria-labelledby="modal-modal-title"
