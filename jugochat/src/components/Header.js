@@ -84,10 +84,15 @@ const confirmRenameNickname = () => {
 
   const logout = () => {
     setUserId(null);
+    setNickname(null);
     Cookies.removeItem("userId");
     Cookies.removeItem("nickname");
     navigate("/");
   };
+
+  const reload = () => {
+    reload();
+  }
 
   // Modal création room
   const handleOpenRoomModal = () => setOpenRoomModal(true);
@@ -142,9 +147,9 @@ const confirmRenameNickname = () => {
           {userId && (
             <>
               <Link style={{ textDecoration: "none" }} to="/chats">
-                <Button sx={{ color: "white" }} variant="text">
+                {/* <Button sx={{ color: "white" }} variant="text">
                   General
-                </Button>
+                </Button> */}
               </Link>
               {rooms.map((room) => {
                 return (
@@ -152,6 +157,7 @@ const confirmRenameNickname = () => {
                     key={room._id}
                     style={{ textDecoration: "none" }}
                     to={`/room/${room.roomId}`}
+                    onClick={reload}
                   >
                     <Button sx={{ color: "white" }} variant="text">
                       {room.name}

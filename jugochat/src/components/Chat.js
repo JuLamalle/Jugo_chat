@@ -41,7 +41,7 @@ export default function Chat() {
   function handleForm(e) {
     e.preventDefault();
     socket.emit("send-message", { message, roomId, userId, nickname })
-    setChat((prev) => [...prev, { message, 'received': false, nickname: nickname }]);
+    setChat((prev) => [...prev, { message, 'received': false, nickname: nickname, roomId: roomId }]);
     setMessage("");
 
   }
