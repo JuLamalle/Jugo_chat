@@ -13,6 +13,7 @@ export default function Chat() {
   const { roomId } = useParams();
   const [nickname, setNickname] = useState("");
   const messageRef = useRef();
+  const [i, setI] = useState(0)
 
   useEffect(() => {
     const nickname = Cookies.getItem("nickname");
@@ -20,6 +21,20 @@ export default function Chat() {
       setNickname(nickname);
     }
     if (!socket) return;
+
+    //setChat persistence
+    async function fetchRoomMessages() {
+      await fetch(`http://localhost:4000/room-messages/${roomId}`)
+        .then((res) => res.json())
+        .then((res) => {
+          console.log(res.roomMessages);
+          setChat(res.roomMessages);
+        });
+    }
+    if(roomId){
+      fetchRoomMessages();
+    }
+
     socket.on('message-from-server', (data) => {
       setChat((prev) => [...prev, { message: data.message, 'received': true, nickname: data.nickname, roomId: data.roomId }]);
     });
@@ -80,7 +95,7 @@ window.location.href = "/";
               <Typography sx={{ textAlign: data.received ? "left" : "right", fontWeight:"bold", color:"yellow", fontSize:"1.1rem"}} >{data.nickname}</Typography>
               <Typography sx={{ textAlign: data.received ? "left" : "right", margin:"5px 10px 5px 5px" }}>{data.message}</Typography>
               </div>
-              ))}
+            ))}
              
           </Box>
           <Box component="form" onSubmit={handleForm}>

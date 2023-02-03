@@ -38,23 +38,23 @@ export default function Header({ socket, userId, setUserId }) {
   };
 
 
-// Modal rename Nickname
-const handleOpenRenameNickname = () => setOpenNewNicknameModal(true);
-const handleCloseRenameNickname = () => setOpenNewNicknameModal(false);
+  // Modal rename Nickname
+  const handleOpenRenameNickname = () => setOpenNewNicknameModal(true);
+  const handleCloseRenameNickname = () => setOpenNewNicknameModal(false);
 
-const renameNickname = () => {
-  handleOpenRenameNickname();
-}
+  const renameNickname = () => {
+    handleOpenRenameNickname();
+  }
 
-const confirmRenameNickname = () => {
-  Cookies.setItem("nickname", newNickName);
-  Cookies.setItem("userId", userId);
-  socket.emit("rename-nickname", { userId, newNickName });
-  handleCloseRenameNickname();
-};
+  const confirmRenameNickname = () => {
+    Cookies.setItem("nickname", newNickName);
+    Cookies.setItem("userId", userId);
+    socket.emit("rename-nickname", { userId, newNickName });
+    handleCloseRenameNickname();
+  };
 
 
-//Modal login
+  //Modal login
   const handleOpen = () => setOpen(true);
 
   const handleClose = () => {

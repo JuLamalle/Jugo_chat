@@ -6,7 +6,7 @@ export default class RoomController extends BaseController {
         console.log("Joining room")
         this.socket.join(roomId);
         console.log(roomId);
-        this.socket.broadcast.emit("message-from-server",  {message :"User join"});
+        this.socket.broadcast.emit("message-from-server",  {message :"User joined"});
 
     }
 
