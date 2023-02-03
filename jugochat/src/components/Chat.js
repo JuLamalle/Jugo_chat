@@ -13,7 +13,6 @@ export default function Chat() {
   const { roomId } = useParams();
   const [nickname, setNickname] = useState("");
   const messageRef = useRef();
-  const [i, setI] = useState(0)
 
   useEffect(() => {
     const nickname = Cookies.getItem("nickname");
@@ -28,7 +27,16 @@ export default function Chat() {
         .then((res) => res.json())
         .then((res) => {
           console.log(res.roomMessages);
-          setChat(res.roomMessages);
+          for(let data of res.roomMessages){
+            console.log(+data);
+            if(userId && data.userId == userId){
+              console.log('COUCOUUU'+data.message);
+              setChat((prev) => [...prev, { message: data.message, nickname: data.nickname, roomId: data.roomId }]);
+            }else {
+              setChat((prev) => [...prev, { message: data.message, 'received': true, nickname: data.nickname, roomId: data.roomId }]);
+            }
+          }
+          console.log(chat);
         });
     }
     if(roomId){
