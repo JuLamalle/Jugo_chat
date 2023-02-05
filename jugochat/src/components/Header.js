@@ -71,6 +71,7 @@ export default function Header({ socket, userId, setUserId }) {
     loginOldUser();
     if (userId != null) {
       Cookies.setItem("nickname", oldNickname);
+      setNickname(oldNickname);
     }
   };
 
