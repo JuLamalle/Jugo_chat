@@ -12,12 +12,14 @@ export default function Header({ socket, userId, setUserId }) {
   const navigate = useNavigate();
   const [rooms, setRooms] = useState([]);
   const [open, setOpen] = useState(false);
+  const [openOldUser, setOpenOldUser] = useState(false);
   const [renameRoomId, setRenameRoomId] = useState("");
   const [openRoomModal, setOpenRoomModal] = useState(false);
   const [openNewRoomNameModal, setOpenNewRoomNameModal] = useState(false);
   const [roomName, setRoomName] = useState("");
   const [newRoomName, setNewRoomName] = useState("");
   const [nickname, setNickname] = useState("");
+  const [oldNickname, setOldNickname] = useState("");
   const [newNickName, setNewNickName] = useState("");
   const [openNewNicknameModal, setOpenNewNicknameModal] = useState(false);
 
@@ -56,14 +58,26 @@ export default function Header({ socket, userId, setUserId }) {
 
   //Modal login
   const handleOpen = () => setOpen(true);
-
   const handleClose = () => {
     setOpen(false);
     Cookies.setItem("nickname", nickname);
     login();
   };
+
+  //Modal login old user
+  const handleOpenOldUser = () => setOpenOldUser(true);
+  const handleCloseOldUser = () => {
+    setOpenOldUser(false);
+    loginOldUser();
+    if (userId != null) {
+      Cookies.setItem("nickname", oldNickname);
+    }
+  };
+
   const handleCancelLogin = () => {
     setOpen(false);
+    setOpenOldUser(false);
+    setOldNickname(null);
   };
 
   //Generate a userId
@@ -82,9 +96,26 @@ export default function Header({ socket, userId, setUserId }) {
     navigate("/");
   };
 
+  const loginOldUser = async () => {
+    await fetch(`http://localhost:4000/userid-by-nickname/${oldNickname}`)
+      .then((res) => res.json())
+      .then(res => {
+        console.log(res.data.userId);
+        setUserId(res.data.userId);
+        Cookies.setItem("userId", res.data.userId);
+      })
+      .then(navigate("/"))
+      .catch(err => {
+        alert('No Nickname matched ! Please, try again. ');
+        setUserId(null);
+        setOldNickname(null);
+      })
+  };
+
   const logout = () => {
     setUserId(null);
     setNickname(null);
+    setOldNickname(null);
     Cookies.removeItem("userId");
     Cookies.removeItem("nickname");
     navigate("/");
@@ -120,12 +151,12 @@ export default function Header({ socket, userId, setUserId }) {
       setRooms(rooms.filter((room) => room.roomId !== roomId));
     });
 
-    socket.on("rename-nickname", ({userId, newNickName}) =>{
+    socket.on("rename-nickname", ({ userId, newNickName }) => {
       setUserId(userId);
       setNickname(newNickName);
     });
 
-    socket.on("rename-room", ({renameRoomId, newRoomName}) =>{
+    socket.on("rename-room", ({ renameRoomId, newRoomName }) => {
       setRenameRoomId(renameRoomId);
       setNewRoomName(newRoomName);
     });
@@ -183,15 +214,24 @@ export default function Header({ socket, userId, setUserId }) {
                 sx={{ color: "white" }}
                 variant="text"
                 onClick={() => {
-                  handleOpen();
+                  handleOpenOldUser();
                 }}
               >
                 Login
               </Button>
+              <Button
+                sx={{ color: "white" }}
+                variant="text"
+                onClick={() => {
+                  handleOpen();
+                }}
+              >
+                Sign Up
+              </Button>
             </div>
           )}
 
-              {/* Modal rename room  */}
+          {/* Modal rename room  */}
 
           {userId && (
             <>
@@ -243,11 +283,11 @@ export default function Header({ socket, userId, setUserId }) {
                 </Box>
               </Modal>
 
-                  {/* Modal rename Nickname  */}
-                  
+              {/* Modal rename Nickname  */}
+
               <Modal
-            open={openNewNicknameModal}
-            aria-labelledby="modal-title"
+                open={openNewNicknameModal}
+                aria-labelledby="modal-title"
                 aria-describedby="modal-modal-descrip"
               >
                 <Box
@@ -264,7 +304,7 @@ export default function Header({ socket, userId, setUserId }) {
                   }}
                 >
                   <Typography id="modal-title" variant="h6" component="h2">
-                  Please enter new Nickname :
+                    Please enter new Nickname :
                   </Typography>
                   <TextField
                     sx={{ marginTop: "10px" }}
@@ -293,7 +333,7 @@ export default function Header({ socket, userId, setUserId }) {
                 </Box>
               </Modal>
 
-              
+
 
               <Button
                 sx={{ color: "white" }}
@@ -307,7 +347,7 @@ export default function Header({ socket, userId, setUserId }) {
                 Logout
               </Button>
 
-                  {/* Modal New Room */}
+              {/* Modal New Room */}
               <Modal
                 open={openNewRoomNameModal}
                 aria-labelledby="modal-title"
@@ -357,8 +397,8 @@ export default function Header({ socket, userId, setUserId }) {
             </>
           )}
 
-                {/* Modal Nickname  */}
-                
+          {/* Modal Nickname  */}
+
           <Modal
             open={open}
             aria-labelledby="modal-modal-title"
@@ -404,6 +444,55 @@ export default function Header({ socket, userId, setUserId }) {
               </Button>
             </Box>
           </Modal>
+
+          {/* Modal Old User  */}
+
+          <Modal
+            open={openOldUser}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box
+              sx={{
+                width: "500px",
+                margin: "50%",
+                border: "2px solid",
+                position: "absolute",
+                transform: "translate(-50%, -50%)",
+                bgcolor: "background.paper",
+                marginTop: "400px",
+                height: "120px",
+                borderRadius: "10px",
+              }}
+            >
+              <Typography id="modal-old-user-title" variant="h6" component="h2">
+                Please enter your old Nickname :
+              </Typography>
+              <TextField
+                sx={{ marginTop: "10px" }}
+                id="outlined-old-user-textfield"
+                onChange={(e) => setOldNickname(e.target.value)}
+                value={oldNickname}
+                label="Old Name"
+                variant="outlined"
+              ></TextField>
+              <Button
+                onClick={handleCloseOldUser}
+                variant="secondary"
+                sx={{ marginTop: "20px" }}
+              >
+                Confirm
+              </Button>
+              <Button
+                onClick={handleCancelLogin}
+                variant="secondary"
+                sx={{ marginTop: "20px" }}
+              >
+                Cancel
+              </Button>
+            </Box>
+          </Modal>
+
         </Box>
       </Box>
     </Card>

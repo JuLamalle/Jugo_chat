@@ -14,4 +14,9 @@ router.get("/room-messages/:roomId", async (req, res) => {
     res.json({roomMessages});
 });
 
+router.get("/userid-by-nickname/:nick", async (req, res) => {
+    const data = await Message.findOne({nickname: req.params.nick});
+    res.json({data});
+});
+
 export default router;
